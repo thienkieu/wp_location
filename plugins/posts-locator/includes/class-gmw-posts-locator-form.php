@@ -159,10 +159,17 @@ class GMW_Posts_Locator_Form extends GMW_Form {
 			$lat      = esc_sql( $this->form['lat'] );
 			$lng      = esc_sql( $this->form['lng'] );
 			$distance = ! empty( $this->form['radius'] ) ? esc_sql( $this->form['radius'] ) : '';
+			$price = ! empty( $this->form['price'] ) ? esc_sql( $this->form['price'] ) : '';
+			
 
 			$clauses['fields'] .= ", ROUND( {$earth_radius} * acos( cos( radians( {$lat} ) ) * cos( radians( gmw_locations.latitude ) ) * cos( radians( gmw_locations.longitude ) - radians( {$lng} ) ) + sin( radians( {$lat} ) ) * sin( radians( gmw_locations.latitude ) ) ),1 ) AS distance";
 
 			$clauses['join'] .= " INNER JOIN {$wpdb->base_prefix}gmw_locations gmw_locations ON $wpdb->posts.ID = gmw_locations.object_id ";
+			$clauses['join'] .= " INNER JOIN {$wpdb->base_prefix}gmw_rooms gmw_rooms ON $wpdb->posts.ID = gmw_rooms.object_id ";
+
+			if (!empty($price)) {
+				$clauses['where'] .= " AND gmw_rooms.price < {$price}";
+			}
 
 			if ( ! empty( $distance ) ) {
 
