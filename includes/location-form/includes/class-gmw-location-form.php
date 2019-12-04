@@ -396,6 +396,18 @@ class GMW_Location_Form {
 	}
 
 	/**
+	 * Get rooms from database if exists.
+	 *
+	 * @since 3.0
+	 *
+	 * @return array | false location details from database if exists
+	 */
+	protected function get_saved_rooms() {
+		$rooms = gmw_get_rooms_by_object( $this->object_type, $this->args['object_id'] );
+		return $rooms;
+	}
+
+	/**
 	 * Get location meta field from databse if exists.
 	 *
 	 * We getting all meta fields associate with the location to be able to display
@@ -1328,7 +1340,7 @@ class GMW_Location_Form {
 		// save location.
 		// $location['ID'] = gmw_update_location_data( $location_args );
 		$location['ID'] = gmw_insert_location( $location_args );
-
+		gmw_insert_rooms($location['object_id'], $location['object_type'], $location['room_info']);
 		// filter location meta before updating.
 		$location_meta = apply_filters( 'gmw_lf_location_meta_before_location_updated', $location_meta, $location, $form_values );
 		$location_meta = apply_filters( 'gmw_lf_' . $location['object_type'] . '_location_meta_before_location_updated', $location_meta, $location, $form_values );

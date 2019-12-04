@@ -59,8 +59,14 @@ class GMW_Post_Location_Form extends GMW_Location_Form {
 			'icon'     => 'gmw-icon-phone',
 			'priority' => 20,
 		);
-		$tabs['days_hours'] = array(
+		/*$tabs['days_hours'] = array(
 			'label'    => __( 'Days & Hours', 'geo-my-wp' ),
+			'icon'     => 'gmw-icon-clock',
+			'priority' => 25,
+		);*/
+
+		$tabs['room_info'] = array(
+			'label'    => __( 'Room Info', 'geo-my-wp' ),
 			'icon'     => 'gmw-icon-clock',
 			'priority' => 25,
 		);
@@ -154,6 +160,24 @@ class GMW_Post_Location_Form extends GMW_Location_Form {
 			),
 		);
 
+		// room_info
+		$fields['room_info'] = array(
+			'label'  => __( 'Room Info', 'geo-my-wp' ),
+			'fields' => array(
+				'room_info' => array(
+					'name'        => 'gmw_pt_days_hours',
+					'label'       => __( 'Room Info', 'geo-my-wp' ),
+					'desc'        => '',
+					'id'          => 'gmw-days-hours',
+					'type'        => 'text',
+					'default'     => '',
+					'placeholder' => '',
+					'attributes'  => '',
+					'priority'    => 5,
+				),
+			),
+		);
+
 		$fields = apply_filters( 'gmw_post_location_form_fields', $fields, $this );
 
 		return $fields;
@@ -222,6 +246,88 @@ class GMW_Post_Location_Form extends GMW_Location_Form {
 			<?php do_action( 'gmw_lf_post_days_hours_section_end', $this ); ?>
 
 		</div>
+
+		<!-- room info -->
+		<div id="room_info-tab-panel" class="section-wrapper room-info">
+
+			<?php do_action( 'gmw_lf_post_room_info_section_start', $this ); ?>
+
+			<h3><?php _e( 'Room info', 'geo-my-wp' ); ?></h3>
+
+			<?php
+				//get the location's days_hours from database
+				$rooms = $this->get_saved_rooms();
+				$existedRoomCount  = count($rooms);
+			if ( empty( $rooms ) ) {
+				$rooms = array();
+				$existedRoomCount = 0;
+			}
+			?>
+			<table class="form-table">
+
+				<?php for ( $i = $existedRoomCount -1; $i >= 0; $i-- ) { ?>
+
+					<tr>
+						<th style="width:100px">
+							<label for=""><?php _e( 'Total at stair '.$i, 'geo-my-wp' ); ?></label>
+						</th>
+						<td style="width:50px">
+							<input type="text" class="gmw-lf-field group_days_hours" name="gmw_location_form[room_info][<?php echo $i; ?>][total]" id="gmw-pt-days-<?php echo $i; ?>" value="<?php if ( ! empty( $rooms[$i]->number_room ) ) echo esc_attr( $rooms[$i]->number_room ); ?>" />
+						</td>
+
+						<th style="width:130px">
+							<label for=""><?php _e( 'Avaliable at stair '.$i, 'geo-my-wp' ); ?></label>
+						</th>
+
+						<td style="width:50px">
+							<input type="text" class="gmw-pt-field group_days_hours" name="gmw_location_form[room_info][<?php echo $i; ?>][available]" id="gmw-pt-hours-<?php echo $i; ?>" value="<?php if ( ! empty( $rooms[$i]->avalible_room ) ) echo esc_attr( $rooms[$i]->avalible_room); ?>" />
+						</td>
+
+						<th style="width:100">
+							<label for=""><?php _e( 'Price at stair '.$i, 'geo-my-wp' ); ?></label>
+						</th>
+
+						<td>
+							<input type="text" class="gmw-pt-field group_days_hours" name="gmw_location_form[room_info][<?php echo $i; ?>][price]" id="gmw-pt-hours-<?php echo $i; ?>" value="<?php if ( ! empty( $rooms[$i]->price ) ) echo esc_attr( $rooms[$i]->price ); ?>" />
+						</td>
+					</tr>
+
+				<?php } ?>
+				<?php for ( $i = $existedRoomCount; $i <= 6; $i++ ) { ?>
+
+				<tr>
+					<th style="width:100px">
+						<label for=""><?php _e( 'Total at stair '.$i, 'geo-my-wp' ); ?></label>
+					</th>
+					<td style="width:50px">
+						<input type="text" class="gmw-lf-field group_days_hours" name="gmw_location_form[room_info][<?php echo $i; ?>][total]" id="gmw-pt-days-<?php echo $i; ?>" value="" />
+					</td>
+
+					<th style="width:130px">
+						<label for=""><?php _e( 'Avaliable at stair '.$i, 'geo-my-wp' ); ?></label>
+					</th>
+
+					<td style="width:50px">
+						<input type="text" class="gmw-pt-field group_days_hours" name="gmw_location_form[room_info][<?php echo $i; ?>][available]" id="gmw-pt-hours-<?php echo $i; ?>" value="" />
+					</td>
+
+					<th style="width:100">
+						<label for=""><?php _e( 'Price at stair '.$i, 'geo-my-wp' ); ?></label>
+					</th>
+
+					<td>
+						<input type="text" class="gmw-pt-field group_days_hours" name="gmw_location_form[room_info][<?php echo $i; ?>][price]" id="gmw-pt-hours-<?php echo $i; ?>" value="" />
+					</td>
+				</tr>
+
+				<?php } ?>
+
+			</table>
+
+			<?php do_action( 'gmw_lf_post_room_info_section_end', $this ); ?>
+
+		</div>
+
 		<?php
 		do_action( 'gmw_post_location_form_after_panels', $this );
 	}

@@ -95,6 +95,10 @@ function gmw_get_location_by_object( $object_type = '', $object_id = 0, $output 
 	return GMW_Location::get_by_object( $object_type, $object_id, $output, $cache );
 }
 
+function gmw_get_rooms_by_object( $object_type = '', $object_id = 0, $output = OBJECT, $cache = true ) {
+	return GMW_Location::get_room_by_object( $object_type, $object_id, $output, $cache );
+}
+
 /**
  * Get the location ID by object type and object ID.
  *
@@ -281,6 +285,17 @@ function gmw_delete_location_meta_by_object( $object_type = '', $object_id = 0, 
  */
 function gmw_insert_location( $location_data = array() ) {
 	return GMW_Location::insert( $location_data );
+}
+
+/**
+ * Insert new rooms by passing a complete location data exept for location ID ( ID argument ).
+ *
+ * @param  array $room_data location data.
+ *
+ * @return integer                new location ID
+ */
+function gmw_insert_rooms($object_id, $object_type, $room_data = array() ) {
+	return GMW_Location::insertRooms( $object_id, $object_type, $room_data );
 }
 
 /**

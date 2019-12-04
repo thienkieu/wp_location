@@ -284,6 +284,32 @@ class GMW_Location {
 		return $location;
 	}
 
+	public static function insertRooms($object_id, $object_type, $rooms) {
+		global $wpdb;
+		$table = $wpdb->base_prefix . 'gmw_rooms';
+		// update location
+		$wpdb->delete(
+			$table,
+			array( 'object_id' => $object_id, 'object_type' => $object_type )
+		);
+
+		foreach($rooms as $key => $stair) {
+			if (!empty($stair['total']) && !empty($stair['price'])) {
+				$wpdb->insert(
+					$table,
+					array(
+						'object_id' => $object_id, 
+						'object_type' => $object_type,
+						'name' => 'stair_'.$key,
+						'number_room' => $stair['total'],
+						'avalible_room' => $stair['available'],
+						'price' => $stair['price'],
+					)
+				);
+			}
+		}
+	}
+
 	/**
 	 * Inset location - Create new or update an existing location in gmw_locations database table.
 	 *
@@ -661,6 +687,68 @@ class GMW_Location {
 		}
 
 		return $location;
+	}
+
+	public static function get_room_by_object( $object_type = '', $object_id = 0, $output = OBJECT, $cache = true ) {
+
+		// verify object type and object ID. If any of them empty use try_get_location function
+		if ( empty( $object_type ) || empty( $object_id ) ) {
+
+			return false;
+		}
+
+		// verify object types
+		if ( ! in_array( $object_type, GMW()->object_types ) ) {
+
+			trigger_error( 'Trying to get a room using invalid object type.', E_USER_NOTICE );
+
+			return false;
+		}
+
+		//verify object ID
+		if ( ! self::verify_id( $object_id ) ) {
+
+			trigger_error( 'Trying to get a room using invalid object ID.', E_USER_NOTICE );
+
+			return false;
+		}
+
+		$object_id = absint( $object_id );
+
+		// look for locations in cache if needed
+		$rooms = $cache ? wp_cache_get( $object_type . '_' . $object_id, 'gmw_rooms' ) : false;
+
+		if ( false === $rooms ) {
+
+			global $wpdb;
+			
+			$table = $wpdb->base_prefix . 'gmw_rooms';
+			$rooms = $wpdb->get_results(
+				$wpdb->prepare(
+					"
+					SELECT *
+		            FROM   $table
+		            WHERE  object_type = %s 
+		            AND    object_id   = %d",					
+					$object_type,
+					$object_id
+				),
+				OBJECT
+			);
+
+			// save to cache if location found
+			if ( ! empty( $rooms ) ) {
+				wp_cache_set( $object_type . '_' . $object_id, $rooms, 'gmw_rooms' );
+				//wp_cache_set( $location->ID, $location, 'gmw_rooms' );
+			}
+		}
+
+		// if no location found
+		if ( empty( $rooms ) ) {
+			return null;
+		}
+    		
+		return $rooms;
 	}
 
 	/**

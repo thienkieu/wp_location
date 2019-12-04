@@ -49,7 +49,9 @@
         <?php gmw_search_form_radius( $gmw ); ?>
             
         <?php gmw_search_form_units( $gmw ); ?>
-            		
+
+		<input type="text" name="price" placeholder="price" />
+
         <?php do_action( 'gmw_search_form_before_submit', $gmw ); ?>
         
 		<?php gmw_search_form_submit_button( $gmw ); ?>
