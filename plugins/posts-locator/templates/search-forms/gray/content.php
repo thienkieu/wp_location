@@ -54,7 +54,7 @@
 
         <?php do_action( 'gmw_search_form_before_submit', $gmw ); ?>
         
-		<?php gmw_search_form_submit_button( $gmw ); ?>
+		<?php gmw_search_form_submit_button( $gmw ); ?>		
 		
 		<?php do_action( 'gmw_search_form_end', $gmw ); ?>
 		

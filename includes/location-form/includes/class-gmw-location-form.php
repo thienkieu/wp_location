@@ -1340,7 +1340,8 @@ class GMW_Location_Form {
 		// save location.
 		// $location['ID'] = gmw_update_location_data( $location_args );
 		$location['ID'] = gmw_insert_location( $location_args );
-		gmw_insert_rooms($location['object_id'], $location['object_type'], $location['room_info']);
+		gmw_insert_rooms($location['object_id'], $location['object_type'], $location['room_info']);		
+		//gmw_insert_subscribers($location['object_id'], $location['object_type'], $location['subscriber_info']);
 		// filter location meta before updating.
 		$location_meta = apply_filters( 'gmw_lf_location_meta_before_location_updated', $location_meta, $location, $form_values );
 		$location_meta = apply_filters( 'gmw_lf_' . $location['object_type'] . '_location_meta_before_location_updated', $location_meta, $location, $form_values );
